@@ -165,10 +165,10 @@ if __name__ == "__main__":
         train_models=True,
         test_models=True,
 
-        loss_fig_title=f'{dataset}@{lr}',
-        acc_fig_title=f'WNT_training_acc_on_{dataset}@{lr}',
-        test_loss_fig_title=f'WNT_test_loss_on_{dataset}@{lr}',
-        test_acc_fig_title=f'WNT_test_acc_on_{dataset}@{lr}',
+        loss_fig_title=f'training_loss_{dataset}@{lr}',
+        acc_fig_title=f'training_acc_on_{dataset}@{lr}',
+        test_loss_fig_title=f'test_loss_on_{dataset}@{lr}',
+        test_acc_fig_title=f'test_acc_on_{dataset}@{lr}',
 
         dataset=dataset,
         checkpoint=1,
