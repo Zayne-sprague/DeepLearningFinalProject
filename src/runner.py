@@ -84,6 +84,7 @@ def run(
             # Grab the CIFAR-100 dataset, with a batch size of 10, and store it in the Data Directory (src/data)
             train_dataloader, test_dataloader = get_dataloder(dataset, BATCH_SIZE, DATA_DIR)
 
+
             # Set up a learning rate and optimizer
             opt = optimizer(net.parameters(), lr=config['LR'])
 
@@ -148,13 +149,12 @@ def run(
         plt.show()
 
 
-
-
 if __name__ == "__main__":
     lr = 0.0001
     dataset = "CIFAR-100"
     from functools import partial
-    act = partial(KernelActivation, InhibitorLocal(), kernel_size=3)
+    from src.activations.activation import nelu
+    act = partial(KernelActivation, partial(nelu, influence=0.1), kernel_size=2)
 
     run(
         epochs=2,
@@ -178,5 +178,4 @@ if __name__ == "__main__":
         checkpoint=1,
         save_on_checkpoint=False,
     )
-
 

@@ -2,6 +2,29 @@ import torch
 from torch import nn
 from torch.nn.modules.utils import _pair, _quadruple
 import torch.nn.functional as F
+from torch import tensor
+from typing import Union, Callable
+from functools import partial
+
+
+def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
+    batch_size = img.shape[0]
+    patches: tensor = img.unfold(1, 1, 1).unfold(2, k, k).unfold(3, k, k)
+    unfold_shape = patches.shape
+    patches = patches.contiguous().view(-1, 1, k, k)
+
+    return patches, partial(stitcher, batch_size=batch_size, unfold_shape=unfold_shape)
+
+
+def stitcher(patches: tensor, batch_size, unfold_shape) -> tensor:
+    patches_orig = patches.view(unfold_shape)
+    output_c = unfold_shape[1] * unfold_shape[4]
+    output_h = unfold_shape[2] * unfold_shape[5]
+    output_w = unfold_shape[3] * unfold_shape[6]
+    patches_orig = patches_orig.permute(0, 1, 4, 2, 5, 3, 6).contiguous()
+    patches_orig = patches_orig.view(batch_size, output_c, output_h, output_w)
+
+    return patches_orig
 
 
 class KernelActivation(nn.Module):
@@ -17,14 +40,16 @@ class KernelActivation(nn.Module):
 
             # unfold into image patches -- should these overlap?
             # patches = x.unfold(2, self.k, self.k).unfold(3, self.k, self.k).transpose(1, 3).reshape(-1, c, h, w)
-            patches = x.unfold(1, self.k, self.k).unfold(2, self.k, self.k).reshape(-1, self.k, self.k)
+            # patches = x.unfold(1, self.k, self.k).unfold(2, self.k, self.k).reshape(-1, self.k, self.k)
+            patches, stitch_func = patcher(x, self.k)
 
             # apply kernel activation to each patch
-            activations = [self.neighborhood_activation(patch) for patch in patches]
+            # activations = torch.tensor([self.neighborhood_activation(patch) for patch in patches])
+            activations = torch.cat([self.neighborhood_activation(patch) for patch in patches], 0).unsqueeze(1)
 
             # fold back into single tensor
             # return F.fold(activations, x.shape[-2:], kernel_size=self.k)
-            repatched = patches.contiguous().view(-1, 1, self.k, self.k).reshape(-1, c, h, w)
+            repatched = stitch_func(activations)
             return repatched
         else:
             # how would the dense activation work? do we look at a sliding window over a single vector of activations?
@@ -38,8 +63,9 @@ class InhibitorLocal(nn.Module):
         self.inhibitance = inhibitance
 
     def forward(self, x):
-        act = torch.where(x > self.activated, 1, 0)
-        return x * act
+        return x
+        # act = torch.where(x > self.activated, 1, 0)
+        # return x * act
 
         # if len(x.shape) == 4:
         #     return self.conv_forward(x)
@@ -112,3 +138,8 @@ class InhibitorLocal(nn.Module):
 
         return x
 
+def nelu(patch: tensor, influence: float = 0.1) -> tensor:
+    impact = patch[patch < 0].sum() * influence
+    patch[patch > 0] += impact
+    patch[patch < 0] = 0
+    return patch
