@@ -13,6 +13,7 @@ from src.activations.KNL import Inhibitor
 from src.backbone import Backbone
 from src.dataloader import get_dataloder
 
+from src.activations.activation import KernelActivation, InhibitorLocal
 
 def run(
         epochs: int = 40,
@@ -152,6 +153,8 @@ def run(
 if __name__ == "__main__":
     lr = 0.0001
     dataset = "CIFAR-100"
+    from functools import partial
+    act = partial(KernelActivation, InhibitorLocal(), kernel_size=3)
 
     run(
         epochs=2,
@@ -160,7 +163,8 @@ if __name__ == "__main__":
 
         optimizer=torch.optim.Adam,
         normalization=torch.nn.Dropout,
-        activation=nn.ReLU,
+        # activation=nn.ReLU,
+        activation=act,
 
         train_models=True,
         test_models=True,
