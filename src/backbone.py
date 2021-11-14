@@ -26,11 +26,11 @@ class Backbone(nn.Module):
         # num_channels should be constant
         num_channels = 128
         self.init_conv = nn.Sequential(nn.Conv2d(3, 128, 3, padding="same"), norm_mod(), activation())
-        self.stage1 = nn.Sequential(ResMod(num_channels, norm_mod, nn.ReLU), ResMod(num_channels, norm_mod, nn.ReLU),
+        self.stage1 = nn.Sequential(ResMod(num_channels, norm_mod, activation), ResMod(num_channels, norm_mod, activation),
                                     nn.MaxPool2d(2))
-        self.stage2 = nn.Sequential(ResMod(num_channels, norm_mod, nn.ReLU), ResMod(num_channels, norm_mod, nn.ReLU),
+        self.stage2 = nn.Sequential(ResMod(num_channels, norm_mod, activation), ResMod(num_channels, norm_mod, activation),
                                     nn.MaxPool2d(2))
-        self.stage3 = ResMod(num_channels, norm_mod, nn.ReLU)
+        self.stage3 = ResMod(num_channels, norm_mod, activation)
         self.pool = nn.AdaptiveMaxPool2d(1)
         self.logits = nn.Linear(num_channels, num_classes)
         self.loss = nn.CrossEntropyLoss()

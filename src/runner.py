@@ -14,7 +14,7 @@ from src.backbone import Backbone
 from src.dataloader import get_dataloder
 
 from src.activations.activation import KernelActivation
-
+torch.backends.cudnn.benchmark = True
 def run(
         epochs: int = 40,
         batch_size: int = 64,
@@ -38,6 +38,7 @@ def run(
         save_on_checkpoint: bool = True,
 
     ):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     EPOCHS = epochs
     BATCH_SIZE = batch_size
@@ -67,6 +68,7 @@ def run(
         NUM_CLASSES = 200
 
     net_bb_torch_norm = Backbone(NUM_CLASSES, normalization, activation)
+    net_bb_torch_norm.to(device)
 
     # Different models with some parameters I want to compare against
     configs = []
@@ -153,17 +155,22 @@ if __name__ == "__main__":
     lr = 0.0001
     dataset = "CIFAR-100"
     from functools import partial
-    from src.activations.activation import nelu
-    act = partial(KernelActivation, partial(nelu, influence=0.1), kernel_size=8)
+    from src.activations.activation import nelu, batch_nelu
+
+    ACTIVATION = batch_nelu
+    IS_BATCH_ACTIVATION = True
+    KERNEL_SIZE = 32
+
+    act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION, kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
 
     run(
-        epochs=2,
+        epochs=3 * 72,
         batch_size=64,
         learning_rate=0.0001,
 
         optimizer=torch.optim.Adam,
-        normalization=torch.nn.Dropout,
+        normalization=torch.nn.Identity,
         # activation=nn.ReLU,
         activation=act,
 
