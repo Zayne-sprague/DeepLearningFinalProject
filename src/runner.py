@@ -13,7 +13,7 @@ from src.activations.KNL import Inhibitor
 from src.backbone import Backbone
 from src.dataloader import get_dataloder
 
-from src.activations.activation import KernelActivation, InhibitorLocal
+from src.activations.activation import KernelActivation
 
 def run(
         epochs: int = 40,
@@ -154,7 +154,8 @@ if __name__ == "__main__":
     dataset = "CIFAR-100"
     from functools import partial
     from src.activations.activation import nelu
-    act = partial(KernelActivation, partial(nelu, influence=0.1), kernel_size=2)
+    act = partial(KernelActivation, partial(nelu, influence=0.1), kernel_size=8)
+    # act = nn.ReLU
 
     run(
         epochs=2,

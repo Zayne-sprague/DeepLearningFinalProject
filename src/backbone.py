@@ -16,6 +16,9 @@ class ResMod(nn.Module):
         return self.stem(x) + x
 
 
+
+## TODO - play around with where the custom activation is placed in the backbone.
+
 class Backbone(nn.Module):
     def __init__(self, num_classes, norm_mod, activation=nn.ReLU):
         super(Backbone, self).__init__()
@@ -23,11 +26,11 @@ class Backbone(nn.Module):
         # num_channels should be constant
         num_channels = 128
         self.init_conv = nn.Sequential(nn.Conv2d(3, 128, 3, padding="same"), norm_mod(), activation())
-        self.stage1 = nn.Sequential(ResMod(num_channels, norm_mod, activation), ResMod(num_channels, norm_mod, activation),
+        self.stage1 = nn.Sequential(ResMod(num_channels, norm_mod, nn.ReLU), ResMod(num_channels, norm_mod, nn.ReLU),
                                     nn.MaxPool2d(2))
-        self.stage2 = nn.Sequential(ResMod(num_channels, norm_mod, activation), ResMod(num_channels, norm_mod, activation),
+        self.stage2 = nn.Sequential(ResMod(num_channels, norm_mod, nn.ReLU), ResMod(num_channels, norm_mod, nn.ReLU),
                                     nn.MaxPool2d(2))
-        self.stage3 = ResMod(num_channels, norm_mod, activation)
+        self.stage3 = ResMod(num_channels, norm_mod, nn.ReLU)
         self.pool = nn.AdaptiveMaxPool2d(1)
         self.logits = nn.Linear(num_channels, num_classes)
         self.loss = nn.CrossEntropyLoss()

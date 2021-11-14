@@ -5,7 +5,9 @@ from functools import partial
 
 def nelu(patch: tensor, influence: float = 0.1) -> tensor:
     impact = patch[patch < 0].sum() * influence
-    patch[patch > 0] += impact
+    # patch[patch > 0] += impact
+    patch[patch > 0] = patch[patch > 0] + impact
+
     patch[patch < 0] = 0
     return patch
 

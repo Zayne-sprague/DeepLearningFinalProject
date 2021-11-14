@@ -56,7 +56,7 @@ def train(net: torch.nn.Module, optimizer: torch.optim.Optimizer, trainloader, e
         total_images = 0
         training_loss = 0
 
-        for batch_index, (images, labels) in enumerate(tqdm(trainloader, desc=loader_description)):
+        for batch_index, (images, labels) in enumerate(tqdm(trainloader, desc=loader_description, leave=False, position=0)):
             optimizer.zero_grad()
 
             images, labels = images.to(device), labels.to(device)
