@@ -163,7 +163,32 @@ if __name__ == "__main__":
 
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION, kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
+    print("DROPOUT")
+    print("--------------------")
+    run(
+        epochs=25,
+        batch_size=64,
+        learning_rate=0.0001,
 
+        optimizer=torch.optim.Adam,
+        normalization=torch.nn.Dropout,
+        # activation=nn.ReLU,
+        activation=act,
+
+        train_models=True,
+        test_models=True,
+
+        loss_fig_title=f'training_loss_{dataset}@{lr}',
+        acc_fig_title=f'training_acc_on_{dataset}@{lr}',
+        test_loss_fig_title=f'test_loss_on_{dataset}@{lr}',
+        test_acc_fig_title=f'test_acc_on_{dataset}@{lr}',
+
+        dataset=dataset,
+        checkpoint=1,
+        save_on_checkpoint=False,
+    )
+        print("NO DROPOUT")
+    print("--------------------")
     run(
         epochs=3,
         batch_size=64,
