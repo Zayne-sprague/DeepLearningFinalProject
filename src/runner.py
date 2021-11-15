@@ -159,13 +159,13 @@ if __name__ == "__main__":
 
     ACTIVATION = batch_nelu
     IS_BATCH_ACTIVATION = True
-    KERNEL_SIZE = 32
+    KERNEL_SIZE = 8
 
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION, kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
 
     run(
-        epochs=3 * 72,
+        epochs=3,
         batch_size=64,
         learning_rate=0.0001,
 
