@@ -187,7 +187,7 @@ if __name__ == "__main__":
         checkpoint=1,
         save_on_checkpoint=False,
     )
-        print("NO DROPOUT")
+    print("NO DROPOUT")
     print("--------------------")
     run(
         epochs=3,
