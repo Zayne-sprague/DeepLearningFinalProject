@@ -166,7 +166,7 @@ if __name__ == "__main__":
     print("NO DROPOUT")
     print("--------------------")
     run(
-        epochs=3,
+        epochs=25,
         batch_size=64,
         learning_rate=0.0001,
 
