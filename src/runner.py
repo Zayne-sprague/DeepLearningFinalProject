@@ -155,9 +155,9 @@ if __name__ == "__main__":
     lr = 0.0001
     dataset = "CIFAR-100"
     from functools import partial
-    from src.activations.activation import nelu, batch_nelu
+    from src.activations.activation import nelu, batch_nelu, batch_passive_nelu, batch_accelerator, batch_inhibitor
 
-    ACTIVATION = batch_nelu
+    ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
 
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     # act = nn.ReLU
 
     run(
-        epochs=3 * 72,
+        epochs=50,
         batch_size=64,
         learning_rate=0.0001,
 
