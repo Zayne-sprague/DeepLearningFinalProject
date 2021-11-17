@@ -14,6 +14,9 @@ from src.backbone import Backbone
 from src.dataloader import get_dataloder
 
 from src.activations.activation import KernelActivation
+from functools import partial
+from src.activations.activation import nelu, batch_nelu, batch_passive_nelu, batch_accelerator, batch_inhibitor
+
 torch.backends.cudnn.benchmark = True
 def run(
         epochs: int = 40,
@@ -150,18 +153,70 @@ def run(
         save_plt(plt, test_acc_fig_title)
         plt.show()
 
-
-if __name__ == "__main__":
+def batch_run():
     lr = 0.0001
     dataset = "CIFAR-100"
-    from functools import partial
-    from src.activations.activation import nelu, batch_nelu, batch_passive_nelu, batch_accelerator, batch_inhibitor
+
+    configs = [
+        {"title": 'nelu/nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
+        {"title": 'nelu/nelu_8_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=8)},
+        {"title": 'nelu/nelu_4_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'nelu/nelu_8_inf_0.01', "act": partial(KernelActivation, partial(batch_nelu, influence=0.01), is_batch_activation=True, kernel_size=8)},
+        {"title": 'nelu/nelu_8_inf_0.001',"act": partial(KernelActivation, partial(batch_nelu, influence=0.001), is_batch_activation=True, kernel_size=8)},
+        {"title": 'nelu/nelu_8_inf_0.5',"act": partial(KernelActivation, partial(batch_nelu, influence=0.5), is_batch_activation=True, kernel_size=8)},
+        {"title": 'nelu/nelu_8_inf_1', "act": partial(KernelActivation, partial(batch_nelu, influence=1), is_batch_activation=True,kernel_size=8)},
+        {"title": 'pnelu/passive_nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
+        {"title": 'pnelu/passive_nelu_8_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=8)},
+        {"title": 'pnelu/passive_nelu_4_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'accelerator/accelerator_32_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=32)},
+        {"title": 'accelerator/accelerator_8_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=8)},
+        {"title": 'accelerator/accelerator_4_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'inhibitor/inhibitor_32_inf_0.1', "act": partial(KernelActivation, partial(batch_inhibitor, influence=0.1), is_batch_activation=True, kernel_size=32)},
+        {"title": 'inhibitor/inhibitor_8_inf_0.1', "act": partial(KernelActivation, partial(batch_inhibitor, influence=0.1), is_batch_activation=True, kernel_size=8)},
+        {"title": 'inhibitor/inhibitor_4_inf_0.1', "act": partial(KernelActivation, partial(batch_inhibitor, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'baselines/relu', "act": nn.ReLU},
+        {"title": 'baselines/leakyrelu', "act": nn.LeakyReLU},
+        {"title": 'baselines/gelu', "act": nn.GELU},
+
+    ]
+
+    for config in configs:
+
+        act = config['act']
+        title = config['title']
+
+        run(
+            epochs=50,
+            batch_size=64,
+            learning_rate=0.0001,
+
+            optimizer=torch.optim.Adam,
+            normalization=torch.nn.Identity,
+            activation=act,
+
+            train_models=True,
+            test_models=True,
+
+            loss_fig_title=f'{title}/training_loss_{dataset}@{lr}',
+            acc_fig_title=f'{title}/training_acc_on_{dataset}@{lr}',
+            test_loss_fig_title=f'{title}/test_loss_on_{dataset}@{lr}',
+            test_acc_fig_title=f'{title}/test_acc_on_{dataset}@{lr}',
+
+            dataset=dataset,
+            checkpoint=1,
+            save_on_checkpoint=False,
+        )
+
+def single_run():
+    lr = 0.0001
+    dataset = "CIFAR-100"
 
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
 
-    act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION, kernel_size=KERNEL_SIZE)
+    act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
+                  kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
 
     run(
@@ -171,7 +226,6 @@ if __name__ == "__main__":
 
         optimizer=torch.optim.Adam,
         normalization=torch.nn.Identity,
-        # activation=nn.ReLU,
         activation=act,
 
         train_models=True,
@@ -186,4 +240,11 @@ if __name__ == "__main__":
         checkpoint=1,
         save_on_checkpoint=False,
     )
+
+
+if __name__ == "__main__":
+    batch_run()
+    # single_run()
+
+
 
