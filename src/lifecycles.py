@@ -75,6 +75,7 @@ def train(net: torch.nn.Module, optimizer: torch.optim.Optimizer, trainloader, e
             total_images += labels.size(0)
             correct_images += predicted.eq(labels).sum().item()
 
+
         epoch_metrics = {}
         epoch_metrics['correct_images'] = correct_images
         epoch_metrics['total_images'] = total_images

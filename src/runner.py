@@ -36,6 +36,7 @@ def run(
         test_acc_fig_title: str = None,
 
         dataset: str = "CIFAR-100",
+        progress_title: str = None,
 
         checkpoint: int = -1,
         save_on_checkpoint: bool = True,
@@ -76,7 +77,7 @@ def run(
     # Different models with some parameters I want to compare against
     configs = []
 
-    configs.append({'name': f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}', 'label': 'BackBone Torch', 'model': net_bb_torch_norm, 'save_model': f'WN_bb_torch_norm@{learning_rate}|{optim_name}{dataset}', 'save_stats': f'WN_bb_torch_norm_training@{learning_rate}|{optim_name}|{dataset}', 'LR': learning_rate})
+    configs.append({'name': progress_title or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}', 'label': 'BackBone Torch', 'model': net_bb_torch_norm, 'save_model': f'WN_bb_torch_norm@{learning_rate}|{optim_name}{dataset}', 'save_stats': f'WN_bb_torch_norm_training@{learning_rate}|{optim_name}|{dataset}', 'LR': learning_rate})
 
     # Train each model
     if train_models:
@@ -202,10 +203,13 @@ def batch_run():
             test_loss_fig_title=f'{title}/test_loss_on_{dataset}@{lr}',
             test_acc_fig_title=f'{title}/test_acc_on_{dataset}@{lr}',
 
+            progress_title=title,
+
             dataset=dataset,
             checkpoint=1,
             save_on_checkpoint=False,
         )
+
 
 def single_run():
     lr = 0.0001

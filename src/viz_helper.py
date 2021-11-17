@@ -37,4 +37,6 @@ def compare_training_stats(
 
 def save_plt(plot, filename: str, location: Path = IMAGES_DIR):
     plot.draw()
-    plot.savefig(f'{str(location / filename)}.png')
+    pth = location / filename
+    pth.parent.mkdir(exist_ok=True, parents=True)
+    plot.savefig(f'{str(pth)}.png')
