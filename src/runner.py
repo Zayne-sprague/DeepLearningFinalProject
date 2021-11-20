@@ -77,7 +77,7 @@ def run(
     # Different models with some parameters I want to compare against
     configs = []
 
-    configs.append({'name': progress_title or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}', 'label': 'BackBone Torch', 'model': net_bb_torch_norm, 'save_model': f'WN_bb_torch_norm@{learning_rate}|{optim_name}{dataset}', 'save_stats': f'WN_bb_torch_norm_training@{learning_rate}|{optim_name}|{dataset}', 'LR': learning_rate})
+    configs.append({'name': progress_title or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}', 'label': 'BackBone Torch', 'model': net_bb_torch_norm, 'save_model': f'{progress_title}', 'save_stats': f'{progress_title}', 'LR': learning_rate})
 
     # Train each model
     if train_models:
@@ -162,15 +162,17 @@ def batch_run():
         {"title": 'nelu/nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
         {"title": 'nelu/nelu_8_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=8)},
         {"title": 'nelu/nelu_4_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=4)},
-        {"title": 'nelu/nelu_8_inf_0.01', "act": partial(KernelActivation, partial(batch_nelu, influence=0.01), is_batch_activation=True, kernel_size=8)},
-        {"title": 'nelu/nelu_8_inf_0.001',"act": partial(KernelActivation, partial(batch_nelu, influence=0.001), is_batch_activation=True, kernel_size=8)},
-        {"title": 'nelu/nelu_8_inf_0.5',"act": partial(KernelActivation, partial(batch_nelu, influence=0.5), is_batch_activation=True, kernel_size=8)},
-        {"title": 'nelu/nelu_8_inf_1', "act": partial(KernelActivation, partial(batch_nelu, influence=1), is_batch_activation=True,kernel_size=8)},
+        {"title": 'nelu/nelu_4_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=2)},
+        {"title": 'nelu/nelu_4_inf_0.01', "act": partial(KernelActivation, partial(batch_nelu, influence=0.01), is_batch_activation=True, kernel_size=4)},
+        {"title": 'nelu/nelu_4_inf_0.001',"act": partial(KernelActivation, partial(batch_nelu, influence=0.001), is_batch_activation=True, kernel_size=4)},
+        {"title": 'nelu/nelu_4_inf_0.5',"act": partial(KernelActivation, partial(batch_nelu, influence=0.5), is_batch_activation=True, kernel_size=4)},
+        {"title": 'nelu/nelu_4_inf_1', "act": partial(KernelActivation, partial(batch_nelu, influence=1), is_batch_activation=True,kernel_size=4)},
         {"title": 'pnelu/passive_nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
         {"title": 'pnelu/passive_nelu_8_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=8)},
         {"title": 'pnelu/passive_nelu_4_inf_0.1', "act": partial(KernelActivation, partial(batch_passive_nelu, influence=0.1), is_batch_activation=True, kernel_size=4)},
         {"title": 'accelerator/accelerator_32_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=32)},
         {"title": 'accelerator/accelerator_8_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=8)},
+        {"title": 'accelerator/accelerator_4_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=4)},
         {"title": 'accelerator/accelerator_4_inf_0.1', "act": partial(KernelActivation, partial(batch_accelerator, influence=0.1), is_batch_activation=True, kernel_size=4)},
         {"title": 'inhibitor/inhibitor_32_inf_0.1', "act": partial(KernelActivation, partial(batch_inhibitor, influence=0.1), is_batch_activation=True, kernel_size=32)},
         {"title": 'inhibitor/inhibitor_8_inf_0.1', "act": partial(KernelActivation, partial(batch_inhibitor, influence=0.1), is_batch_activation=True, kernel_size=8)},

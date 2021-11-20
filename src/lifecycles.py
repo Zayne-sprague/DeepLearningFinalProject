@@ -13,26 +13,38 @@ Some functions are repurposed from https://github.com/395t/coding-assignment-wee
 """
 
 def save_stats(stats: dict, filename: str):
+    pth = STATS_DIR / "/".join(filename.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     with open(str(STATS_DIR / f'{filename}.json'), 'w') as f:
         json.dump(stats, f)
 
 def load_stats(filename: str) -> dict:
+    pth = STATS_DIR / "/".join(filename.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     with open(str(STATS_DIR / f'{filename}.json'), 'r') as f:
         return json.load(f)
 
 def save_model(net: torch.nn.Module, name: str):
+    pth = CHECKPOINTS_DIR / "/".join(name.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     torch.save(net, str(CHECKPOINTS_DIR / f'{name}.pt'))
 
 
 def load_modal(name: str):
+    pth = CHECKPOINTS_DIR / "/".join(name.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     return torch.load(str(CHECKPOINTS_DIR / f'{name}.pt'))
 
 
 def save_dict(dict, name):
+    pth = CHECKPOINTS_DIR / "/".join(name.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     torch.save(dict, str(CHECKPOINTS_DIR / f'{name}.pt'))
 
 
 def load_dict(name):
+    pth = CHECKPOINTS_DIR / "/".join(name.split("/")[0:-1])
+    pth.mkdir(exist_ok=True, parents=True)
     return torch.load(str(CHECKPOINTS_DIR / f'{name}.pt'))
 
 
@@ -74,7 +86,6 @@ def train(net: torch.nn.Module, optimizer: torch.optim.Optimizer, trainloader, e
             training_loss += loss.item()
             total_images += labels.size(0)
             correct_images += predicted.eq(labels).sum().item()
-
 
         epoch_metrics = {}
         epoch_metrics['correct_images'] = correct_images
