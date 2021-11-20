@@ -220,6 +220,7 @@ def single_run():
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
+    TITLE_OF_RUN = "PUT_TITLE_HERE"
 
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
                   kernel_size=KERNEL_SIZE)
@@ -241,6 +242,8 @@ def single_run():
         acc_fig_title=f'training_acc_on_{dataset}@{lr}',
         test_loss_fig_title=f'test_loss_on_{dataset}@{lr}',
         test_acc_fig_title=f'test_acc_on_{dataset}@{lr}',
+
+        progress_title=TITLE_OF_RUN,
 
         dataset=dataset,
         checkpoint=1,
