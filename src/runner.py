@@ -71,6 +71,8 @@ def run(
         NUM_CLASSES = 10
     if dataset == 'TINY':
         NUM_CLASSES = 200
+    if dataset == "CALTECH101":
+        NUM_CLASSES = 101
 
     net_bb_torch_norm = Backbone(NUM_CLASSES, normalization, activation)
     net_bb_torch_norm.to(device)
@@ -215,14 +217,16 @@ def batch_v1_run():
 
 def batch_v2_run():
     lr = 0.0001
-    dataset = "CIFAR-100"
+    # dataset = "CIFAR-100"
+    # dataset = "TINY"
+    dataset = 'CALTECH101'
 
     configs = [
         {"title": 'excitator_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
-        {"title": 'inhibitor_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
-        {"title": 'softmax_relu/k4_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=4)},
-        {"title": 'max_relu/k4', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=4)},
-        {"title": 'max/k4', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=4)},
+        # {"title": 'inhibitor_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        # {"title": 'softmax_relu/k4_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=4)},
+        # {"title": 'max_relu/k4', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=4)},
+        # {"title": 'max/k4', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=4)},
 
     ]
 
@@ -232,7 +236,7 @@ def batch_v2_run():
         title = config['title']
 
         run(
-            epochs=50,
+            epochs=1,
             batch_size=64,
             learning_rate=0.0001,
 
