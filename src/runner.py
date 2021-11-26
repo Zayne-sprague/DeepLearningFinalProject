@@ -15,7 +15,8 @@ from src.dataloader import get_dataloder
 
 from src.activations.activation import KernelActivation
 from functools import partial
-from src.activations.activation import nelu, batch_nelu, batch_passive_nelu, batch_accelerator, batch_inhibitor
+from src.activations.activation import nelu, batch_nelu, batch_passive_nelu, batch_accelerator, batch_inhibitor, \
+    batch_excitator_v2, batch_inhibitor_v2, batch_max_relu, batch_softmax_relu, batch_max
 
 torch.backends.cudnn.benchmark = True
 def run(
@@ -154,9 +155,10 @@ def run(
         save_plt(plt, test_acc_fig_title)
         plt.show()
 
-def batch_run():
+def batch_v1_run():
     lr = 0.0001
     dataset = "CIFAR-100"
+    GOOGLE_DRIVE = True
 
     configs = [
         {"title": 'nelu/nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
@@ -186,7 +188,50 @@ def batch_run():
     for config in configs:
 
         act = config['act']
-        title = config['title']
+        title = optional_gdrive_path_prepender(config['title'], GOOGLE_DRIVE)
+
+        run(
+            epochs=50,
+            batch_size=64,
+            learning_rate=0.0001,
+
+            optimizer=torch.optim.Adam,
+            normalization=torch.nn.Identity,
+            activation=act,
+
+            train_models=True,
+            test_models=True,
+
+            loss_fig_title=f'{title}/training_loss_{dataset}@{lr}',
+            acc_fig_title=f'{title}/training_acc_on_{dataset}@{lr}',
+            test_loss_fig_title=f'{title}/test_loss_on_{dataset}@{lr}',
+            test_acc_fig_title=f'{title}/test_acc_on_{dataset}@{lr}',
+
+            progress_title=title,
+
+            dataset=dataset,
+            checkpoint=1,
+            save_on_checkpoint=False,
+        )
+
+def batch_v2_run():
+    lr = 0.0001
+    dataset = "CIFAR-100"
+    GOOGLE_DRIVE = False
+
+    configs = [
+        {"title": 'excitator_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'inhibitor_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
+        {"title": 'softmax_relu/k4_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=4)},
+        {"title": 'max_relu/k4', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=4)},
+        {"title": 'max/k4', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=4)},
+
+    ]
+
+    for config in configs:
+
+        act = config['act']
+        title = optional_gdrive_path_prepender(config['title'], GOOGLE_DRIVE)
 
         run(
             epochs=50,
@@ -213,9 +258,12 @@ def batch_run():
         )
 
 
+
 def single_run():
     lr = 0.0001
     dataset = "CIFAR-100"
+
+    GOOGLE_DRIVE = False
 
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
@@ -225,6 +273,10 @@ def single_run():
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
                   kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
+
+    # Do not change
+    TITLE_OF_RUN = optional_gdrive_path_prepender(TITLE_OF_RUN, GOOGLE_DRIVE)
+
 
     run(
         epochs=50,
@@ -251,8 +303,13 @@ def single_run():
     )
 
 
+def optional_gdrive_path_prepender(path: str, prepend: bool = False) -> str:
+    GDRIVE_PATH = '/content/gdrive/MyDrive/colab_output/deep_learning_final_project'
+    return path if not prepend else f'{GDRIVE_PATH}/{path}'
+
 if __name__ == "__main__":
-    batch_run()
+    batch_v2_run()
+    # batch_v1_run()
     # single_run()
 
 

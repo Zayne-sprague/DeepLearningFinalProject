@@ -198,6 +198,7 @@ def accelerator(patch: tensor, influence: float = 0.1) -> tensor:
     patch[patch < 0] = 0
     return patch
 
+
 def batch_inhibitor(patches: tensor, influence: float = 0.1) -> tensor:
     """
     Find the impact of the negative values in the kernel, then remove some of the activation mass proportional from each
@@ -240,6 +241,7 @@ def batch_inhibitor(patches: tensor, influence: float = 0.1) -> tensor:
 
     return patches
 
+
 def inhibitor(patch: tensor, influence: float = 0.1) -> tensor:
     impact = patch[patch < 0].sum() * influence
     patch[patch < 0] *= 1 - influence
@@ -247,5 +249,95 @@ def inhibitor(patch: tensor, influence: float = 0.1) -> tensor:
     patch[patch < 0] = 0
     return patch
 
+
+def batch_excitator_v2(patches: tensor, influence: float = 0.1) -> tensor:
+    # Get all the positive values by making all negative values equal to 0, then sum the patch
+    positive_values = patches.clone()
+    positive_values[positive_values < 0] = 0
+
+    # Sum each patch and apply the influence weight to their sums
+    impacts = positive_values.sum([1,2]) * influence
+
+    # Make list of impacts per patch match the dimensions of the patches ([N, 1, 1] where N is the number of patches)
+    impacts = impacts.unsqueeze(1).unsqueeze(1)
+
+    non_positives = patches.clone()
+    non_positives[patches > 0] = 0
+    non_positives[patches <= 0] = 1
+    non_positives = non_positives.sum([1,2]).unsqueeze(1).unsqueeze(1)
+    non_positives[non_positives == 0] = 1
+
+    # Remove the activation mass we are redistributing from each positive activation proportional to how much each
+    # activation contributed
+    positive_values *= 1 - influence
+
+    # Get all the negative values by zeroing out the positive ones, then add the impacts
+    negative_values = patches.clone()
+    # Distribute the impacts based on the total number of negatives (equally distribute, this prevents the creation of "activation weight"
+    negative_values += impacts / non_positives
+    negative_values[patches > 0] = 0
+
+    # add the positive values only tensor with the negative values only tensor (though the negative value tensor could
+    # now contain positives because we added the impacts to them)
+    patches = positive_values + negative_values
+
+    # anything still below zero is now zeroed out.
+    patches[patches < 0] = 0
+
+    return patches
+
+def batch_inhibitor_v2(patches: tensor, influence: float = 0.1) -> tensor:
+
+    # Get all the negative values by making all negative values equal to 0, then sum the patch
+    negative_values = patches.clone()
+    negative_values[negative_values > 0] = 0
+
+    # Sum each patch and apply the influence weight to their sums
+    impacts = negative_values.sum([1,2]) * influence
+
+    # Make list of impacts per patch match the dimensions of the patches ([N, 1, 1] where N is the number of patches)
+    impacts = impacts.unsqueeze(1).unsqueeze(1)
+
+    non_negatives = patches.clone()
+    non_negatives[patches < 0] = 0
+    non_negatives[patches >= 0] = 1
+    non_negatives = non_negatives.sum([1,2]).unsqueeze(1).unsqueeze(1)
+    # Prevent division by 0
+    non_negatives[non_negatives == 0] = 1
+
+    # Remove the activation mass we are redistributing from each negative activation proportional to how much each
+    # activation contributed
+    negative_values *= 1 - influence
+
+    # Get all the positive values by zeroing out the negative ones, then add the impacts
+    positive_values = patches.clone()
+    positive_values[positive_values < 0] = 0
+    positive_values += impacts
+
+    # add the positive values only tensor with the negative values only tensor (though the positive value tensor could
+    # now contain negatives because we added the impacts to them)
+    patches = positive_values + negative_values
+
+    # anything below zero is now zeroed out.
+    patches[patches < 0] = 0
+
+    return patches
+
+
+def batch_softmax_relu(patches: tensor, threshold: float = 0.25) -> tensor:
+    weights = torch.softmax(patches, dim=1)
+    patches[weights < threshold] = 0
+    return patches
+
+def batch_max_relu(patches: tensor) -> tensor:
+    maximums = patches.amax(dim=(1,2), keepdim=True)
+    patches[patches < maximums] = 0
+    patches[patches < 0] = 0
+    return patches
+
+def batch_max(patches: tensor) -> tensor:
+    maximums = patches.amax(dim=(1,2), keepdim=True)
+    patches[patches < maximums] = 0
+    return patches
 
 ## TODO - make more at some point
