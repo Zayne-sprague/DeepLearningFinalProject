@@ -10,6 +10,13 @@ from tqdm import tqdm
 
 def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
     batch_size = img.shape[0]
+
+    if len(img.shape) == 2:
+        # LINEAR
+        patches = img.view(-1, k).unsqueeze(1)
+        return patches, partial(stitcher, batch_size=batch_size, unfold_shape=patches.shape)
+
+    # IMAGES / CONV
     k = min([k, img.shape[-1], img.shape[-2]])
     patches: tensor = img.unfold(1, 1, 1).unfold(2, k, k).unfold(3, k, k)
     unfold_shape = patches.shape
@@ -20,6 +27,13 @@ def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
 
 def stitcher(patches: tensor, batch_size, unfold_shape) -> tensor:
     patches_orig = patches.view(unfold_shape)
+
+    if len(unfold_shape) == 3:
+        # LINEAR
+        patches_orig = patches_orig.view(batch_size, -1)
+        return patches_orig
+
+    # IMAGES
     output_c = unfold_shape[1] * unfold_shape[4]
     output_h = unfold_shape[2] * unfold_shape[5]
     output_w = unfold_shape[3] * unfold_shape[6]
@@ -30,11 +44,12 @@ def stitcher(patches: tensor, batch_size, unfold_shape) -> tensor:
 
 
 class KernelActivation(nn.Module):
-    def __init__(self, neighborhood_activation, is_batch_activation: bool, kernel_size: int):
+    def __init__(self, neighborhood_activation, is_batch_activation: bool, kernel_size: int, is_linear: bool = False):
         super(KernelActivation, self).__init__()
         self.neighborhood_activation = neighborhood_activation # applies activation to local image patch
         self.k = kernel_size
         self.is_batch_activation = is_batch_activation
+        self.is_linear = is_linear
 
     def forward(self, x):
         def apply(_patches, func):
@@ -46,7 +61,8 @@ class KernelActivation(nn.Module):
         patches, stitch_func = patcher(x, self.k)
 
         if self.is_batch_activation:
-            patches = patches.squeeze()
+            if not self.is_linear:
+                patches = patches.squeeze()
             activations = self.neighborhood_activation(patches)
             activations = activations.unsqueeze(1)
         else:
