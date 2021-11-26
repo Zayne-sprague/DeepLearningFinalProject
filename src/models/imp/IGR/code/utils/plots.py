@@ -6,6 +6,7 @@ from skimage import measure
 import os
 import utils.general as utils
 
+from src.paths import CONFIGS_DIR, DATA_DIR, IMAGES_DIR
 
 def get_threed_scatter_trace(points,caption = None,colorscale = None,color = None):
 
@@ -64,7 +65,7 @@ def plot_threed_scatter(points,path,epoch,in_epoch):
 
 def plot_surface(decoder,path,epoch, shapename,resolution,mc_value,is_uniform_grid,verbose,save_html,save_ply,overwrite, points=None, with_points=False, latent=None, connected=False):
 
-    filename = '{0}/igr_{1}_{2}'.format(path, epoch, shapename)
+    filename = str(IMAGES_DIR / 'igr' / '{0}/igr_{1}_{2}'.format(path, epoch, shapename))
 
     if (not os.path.exists(filename) or overwrite):
 
@@ -226,7 +227,7 @@ def plot_cuts_axis(points,decoder,latent,path,epoch,near_zero,axis,file_name_sep
         # fig['layout']['xaxis2'].update(range=[-1, 1])
         # fig['layout']['yaxis2'].update(range=[-1, 1], scaleanchor="x2", scaleratio=1)
 
-        filename = '{0}{1}cutsaxis_{2}_{3}_{4}.html'.format(path,file_name_sep,axis, epoch, index)
+        filename = str(IMAGES_DIR / 'igr' / '{0}{1}cutsaxis_{2}_{3}_{4}.html'.format(path,file_name_sep,axis, epoch, index))
         fig1 = go.Figure(data=[trace1], layout=layout)
         offline.plot(fig1, filename=filename, auto_open=False)
 
@@ -286,7 +287,7 @@ def plot_cuts(points,decoder,path,epoch,near_zero,latent=None):
         # fig['layout']['xaxis2'].update(range=[-1, 1])
         # fig['layout']['yaxis2'].update(range=[-1, 1], scaleanchor="x2", scaleratio=1)
 
-        filename = '{0}/cuts{1}_{2}.html'.format(path, epoch, index)
+        filename = str(IMAGES_DIR / 'igr' / '{0}/cuts{1}_{2}.html'.format(path, epoch, index))
         fig1 = go.Figure(data=[trace1], layout=layout)
         offline.plot(fig1, filename=filename, auto_open=False)
 

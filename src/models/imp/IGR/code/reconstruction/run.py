@@ -15,7 +15,7 @@ from model.network import gradient
 from scipy.spatial import cKDTree
 from utils.plots import plot_surface, plot_cuts
 
-from src.paths import CONFIGS_DIR, DATA_DIR
+from src.paths import CONFIGS_DIR, DATA_DIR, IMAGES_DIR
 
 class ReconstructionRunner:
 
