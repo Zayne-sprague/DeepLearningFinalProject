@@ -158,7 +158,6 @@ def run(
 def batch_v1_run():
     lr = 0.0001
     dataset = "CIFAR-100"
-    GOOGLE_DRIVE = True
 
     configs = [
         {"title": 'nelu/nelu_32_inf_0.1', "act": partial(KernelActivation, partial(batch_nelu, influence=0.1), is_batch_activation=True, kernel_size=32)},
@@ -188,7 +187,7 @@ def batch_v1_run():
     for config in configs:
 
         act = config['act']
-        title = optional_gdrive_path_prepender(config['title'], GOOGLE_DRIVE)
+        title = config['title']
 
         run(
             epochs=50,
@@ -217,7 +216,6 @@ def batch_v1_run():
 def batch_v2_run():
     lr = 0.0001
     dataset = "CIFAR-100"
-    GOOGLE_DRIVE = False
 
     configs = [
         {"title": 'excitator_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
@@ -231,7 +229,7 @@ def batch_v2_run():
     for config in configs:
 
         act = config['act']
-        title = optional_gdrive_path_prepender(config['title'], GOOGLE_DRIVE)
+        title = config['title']
 
         run(
             epochs=50,
@@ -263,8 +261,6 @@ def single_run():
     lr = 0.0001
     dataset = "CIFAR-100"
 
-    GOOGLE_DRIVE = False
-
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
@@ -273,10 +269,6 @@ def single_run():
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
                   kernel_size=KERNEL_SIZE)
     # act = nn.ReLU
-
-    # Do not change
-    TITLE_OF_RUN = optional_gdrive_path_prepender(TITLE_OF_RUN, GOOGLE_DRIVE)
-
 
     run(
         epochs=50,
@@ -301,11 +293,6 @@ def single_run():
         checkpoint=1,
         save_on_checkpoint=False,
     )
-
-
-def optional_gdrive_path_prepender(path: str, prepend: bool = False) -> str:
-    GDRIVE_PATH = '/content/gdrive/MyDrive/colab_output/deep_learning_final_project'
-    return path if not prepend else f'{GDRIVE_PATH}/{path}'
 
 if __name__ == "__main__":
     batch_v2_run()
