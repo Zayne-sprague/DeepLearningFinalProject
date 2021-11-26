@@ -15,7 +15,7 @@ from model.network import gradient
 from scipy.spatial import cKDTree
 from utils.plots import plot_surface, plot_cuts
 
-from src.paths import CONFIGS_DIR, DATA_DIR, IMAGES_DIR
+from src.paths import CONFIGS_DIR, SMALL_DATA_DIR, IMAGES_DIR
 
 class ReconstructionRunner:
 
@@ -185,7 +185,7 @@ class ReconstructionRunner:
 
         utils.mkdir_ifnotexists(utils.concat_home_dir(os.path.join(self.home_dir, self.exps_folder_name)))
 
-        self.input_file = str(DATA_DIR / self.conf.get_string('train.input_path'))
+        self.input_file = str(SMALL_DATA_DIR / self.conf.get_string('train.input_path'))
         self.data = utils.load_point_cloud_by_file_extension(self.input_file)
 
         sigma_set = []
