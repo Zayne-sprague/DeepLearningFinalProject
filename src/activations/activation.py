@@ -25,11 +25,26 @@ def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
 
     # IMAGES / CONV
     k = min([k, img.shape[-1], img.shape[-2]])
+    wdim = img.shape[-1]
+    hdim = img.shape[-2]
+    wlo = wdim % k
+    hlo = hdim % k
+
+    width_padding = 0
+    height_padding = 0
+
+    if wlo > 0:
+        width_padding = k - wlo
+    if hlo > 0:
+        height_padding = k - hlo
+
+    img = F.pad(img, [0,width_padding,height_padding,0], mode='constant', value=0)
+
     patches: tensor = img.unfold(1, 1, 1).unfold(2, k, k).unfold(3, k, k)
     unfold_shape = patches.shape
     patches = patches.contiguous().view(-1, 1, k, k)
 
-    return patches, partial(stitcher, batch_size=batch_size, unfold_shape=unfold_shape)
+    return patches, partial(stitcher, batch_size=batch_size, unfold_shape=unfold_shape, padded=[height_padding, width_padding])
 
 
 def stitcher(patches: tensor, batch_size, unfold_shape, padded=None) -> tensor:
@@ -49,6 +64,9 @@ def stitcher(patches: tensor, batch_size, unfold_shape, padded=None) -> tensor:
     output_w = unfold_shape[3] * unfold_shape[6]
     patches_orig = patches_orig.permute(0, 1, 4, 2, 5, 3, 6).contiguous()
     patches_orig = patches_orig.view(batch_size, output_c, output_h, output_w)
+
+    if sum(padded) > 0:
+        patches_orig = patches_orig[:, :, :-padded[0], :-padded[1]]
 
     return patches_orig
 
