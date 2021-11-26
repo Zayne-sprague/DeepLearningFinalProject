@@ -65,8 +65,8 @@ def plot_threed_scatter(points,path,epoch,in_epoch):
 
 def plot_surface(decoder,path,epoch, shapename,resolution,mc_value,is_uniform_grid,verbose,save_html,save_ply,overwrite, points=None, with_points=False, latent=None, connected=False):
 
-    filename = str(IMAGES_DIR / 'igr' / '{0}/igr_{1}_{2}'.format(path, epoch, shapename))
-    pth = IMAGES_DIR / 'igr'
+    filename = str(IMAGES_DIR / 'igr' / shapename / '{0}/igr_{1}_{2}'.format(path, epoch, shapename))
+    pth = IMAGES_DIR / 'igr' / shapename
     pth.mkdir(exist_ok=True, parents=True)
 
     if (not os.path.exists(filename) or overwrite):
