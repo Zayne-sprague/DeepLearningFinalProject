@@ -102,7 +102,9 @@ class ReconstructionRunner:
 
             self.optimizer.step()
 
-            if epoch % self.conf.get_int('train.status_frequency') == 0:
+            if (epoch % self.conf.get_int('train.status_frequency') == 0) or (
+                    self.plot_on_epochs and epoch in self.plot_on_epochs) or (
+                    self.plot_frequency and epoch % self.plot_frequency == 0):
                 print('Train Epoch: [{}/{} ({:.0f}%)]\tTrain Loss: {:.6f}\tManifold loss: {:.6f}'
                     '\tGrad loss: {:.6f}\tNormals Loss: {:.6f}'.format(
                     epoch, self.nepochs, 100. * epoch / self.nepochs,
