@@ -13,8 +13,15 @@ def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
 
     if len(img.shape) == 2:
         # LINEAR
+        padded = None
+        dim = img.shape[-1]
+        left_over = dim % k
+        if left_over > 0:
+            padded = k - left_over
+            img = F.pad(img, [0,padded])
+
         patches = img.view(-1, k).unsqueeze(1)
-        return patches, partial(stitcher, batch_size=batch_size, unfold_shape=patches.shape)
+        return patches, partial(stitcher, batch_size=batch_size, unfold_shape=patches.shape, padded=padded)
 
     # IMAGES / CONV
     k = min([k, img.shape[-1], img.shape[-2]])
@@ -25,12 +32,15 @@ def patcher(img: tensor, k: int = 2) -> Union[tensor, Callable]:
     return patches, partial(stitcher, batch_size=batch_size, unfold_shape=unfold_shape)
 
 
-def stitcher(patches: tensor, batch_size, unfold_shape) -> tensor:
+def stitcher(patches: tensor, batch_size, unfold_shape, padded=None) -> tensor:
     patches_orig = patches.view(unfold_shape)
 
     if len(unfold_shape) == 3:
         # LINEAR
+
         patches_orig = patches_orig.view(batch_size, -1)
+        if padded:
+            patches_orig = patches_orig[:,:-padded]
         return patches_orig
 
     # IMAGES

@@ -57,6 +57,7 @@ class ReconstructionRunner:
             if (self.plot_on_epochs and epoch in self.plot_on_epochs) or (self.plot_frequency and epoch % self.plot_frequency == 0):
                 print("Plotting!")
                 self.plot_shapes(epoch)
+                print("Done Plotting!")
 
             # change back to train mode
             self.network.train()
