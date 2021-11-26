@@ -5,6 +5,7 @@ from functools import partial
 
 if __name__ == "__main__":
     custom_activation = partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=4, is_linear=True)
+    plot_frequency = 1
 
     expname = f'test'
     trainRunner = ReconstructionRunner(
@@ -17,7 +18,8 @@ if __name__ == "__main__":
         timestamp='latest',
         checkpoint='latest',
         eval=False,
-        custom_activation=custom_activation
+        custom_activation=custom_activation,
+        plot_frequency=plot_frequency
     )
 
     trainRunner.run()

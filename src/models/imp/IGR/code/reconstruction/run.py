@@ -48,10 +48,14 @@ class ReconstructionRunner:
             mnfld_pnts = cur_data[:, :self.d_in]
             mnfld_sigma = self.local_sigma[indices]
 
-            if epoch % self.conf.get_int('train.checkpoint_frequency') == 0:
-                print('saving checkpoint: ', epoch)
-                self.save_checkpoints(epoch)
-                print('plot validation epoch: ', epoch)
+            # if epoch % self.conf.get_int('train.checkpoint_frequency') == 0:
+            #     print('saving checkpoint: ', epoch)
+            #     self.save_checkpoints(epoch)
+            #     print('plot validation epoch: ', epoch)
+            #     self.plot_shapes(epoch)
+
+            if (self.plot_on_epochs and epoch in self.plot_on_epochs) or (self.plot_frequency and epoch % self.plot_frequency == 0):
+                print("Plotting!")
                 self.plot_shapes(epoch)
 
             # change back to train mode
@@ -144,6 +148,9 @@ class ReconstructionRunner:
             self.conf = kwargs['conf']
 
         self.expname = kwargs['expname']
+
+        self.plot_on_epochs = kwargs.get("plot_on_epochs")
+        self.plot_frequency = kwargs.get("plot_frequency")
 
         # GPU settings
 
