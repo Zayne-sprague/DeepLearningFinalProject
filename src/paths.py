@@ -10,7 +10,7 @@ ROOT_PROJECT_DIR = (__CURR_DIR__ / '../').absolute().resolve()
 SRC_DIR = ROOT_PROJECT_DIR / 'src'
 CHECKPOINTS_DIR = SRC_DIR / 'checkpoints'
 DATA_DIR = SRC_DIR / "data"
-SMALL_DATA_FIR = SRC_DIR / "small_data"
+SMALL_DATA_DIR = SRC_DIR / "small_data"
 CONFIGS_DIR = SRC_DIR / "configs"
 
 __GOOGLE_COLAB_STATS__PATH = Path('/content/gdrive/MyDrive/colab_output/deep_learning_final_project/stats')
