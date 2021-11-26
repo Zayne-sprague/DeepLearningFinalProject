@@ -66,6 +66,8 @@ def plot_threed_scatter(points,path,epoch,in_epoch):
 def plot_surface(decoder,path,epoch, shapename,resolution,mc_value,is_uniform_grid,verbose,save_html,save_ply,overwrite, points=None, with_points=False, latent=None, connected=False):
 
     filename = str(IMAGES_DIR / 'igr' / '{0}/igr_{1}_{2}'.format(path, epoch, shapename))
+    pth = IMAGES_DIR / 'igr'
+    pth.mkdir(exist_ok=True, parents=True)
 
     if (not os.path.exists(filename) or overwrite):
 
@@ -89,10 +91,8 @@ def plot_surface(decoder,path,epoch, shapename,resolution,mc_value,is_uniform_gr
             fig1 = go.Figure(data=trace_surface, layout=layout)
 
 
-        if (save_html):
-            offline.plot(fig1, filename=filename + '.html', auto_open=False)
-        if (not surface['mesh_export'] is None):
-            surface['mesh_export'].export(filename + '.ply', 'ply')
+
+        offline.plot(fig1, filename=filename + '.html', auto_open=False)
         return surface['mesh_export']
 
 
