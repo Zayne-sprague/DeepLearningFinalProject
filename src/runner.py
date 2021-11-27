@@ -11,6 +11,7 @@ from src.lifecycles import train, test, save_model, load_modal, save_stats, load
 from src.viz_helper import compare_training_stats, save_plt
 from src.activations.KNL import Inhibitor
 from src.backbone import Backbone
+from src.vit import ViT
 from src.dataloader import get_dataloder
 
 from src.activations.activation import KernelActivation
@@ -74,13 +75,25 @@ def run(
     if dataset == "CALTECH101":
         NUM_CLASSES = 101
 
-    net_bb_torch_norm = Backbone(NUM_CLASSES, normalization, activation)
-    net_bb_torch_norm.to(device)
+    # net_bb_torch_norm = Backbone(NUM_CLASSES, normalization, activation)
+    # net_bb_torch_norm.to(device)
+    net_vit = ViT(num_labels=NUM_CLASSES)
+    net_vit.to(device)
+
 
     # Different models with some parameters I want to compare against
     configs = []
 
-    configs.append({'name': progress_title or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}', 'label': 'BackBone Torch', 'model': net_bb_torch_norm, 'save_model': f'{progress_title}', 'save_stats': f'{progress_title}', 'LR': learning_rate})
+    configs.append({
+        'name': progress_title
+                or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}',
+        'label': 'BackBone Torch',
+        # 'model': net_bb_torch_norm,
+        'model': net_vit,
+        'save_model': f'{progress_title}',
+        'save_stats': f'{progress_title}',
+        'LR': learning_rate
+    })
 
     # Train each model
     if train_models:
@@ -268,7 +281,7 @@ def single_run():
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
-    TITLE_OF_RUN = "PUT_TITLE_HERE"
+    TITLE_OF_RUN = "vit_baseline"
 
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
                   kernel_size=KERNEL_SIZE)
@@ -299,9 +312,9 @@ def single_run():
     )
 
 if __name__ == "__main__":
-    batch_v2_run()
+    # batch_v2_run()
     # batch_v1_run()
-    # single_run()
+    single_run()
 
 
 
