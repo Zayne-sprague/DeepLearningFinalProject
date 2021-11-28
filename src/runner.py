@@ -4,10 +4,13 @@ from torch import nn
 import torch.nn.functional as F
 from typing import Tuple
 
+from efficientnet_pytorch import EfficientNet
+
 from functools import partial
 
 from src.paths import CHECKPOINTS_DIR, DATA_DIR
-from src.lifecycles import train, test, save_model, load_modal, save_stats, load_stats
+# from src.lifecycles import train, test, save_model, load_modal, save_stats, load_stats
+from src.lifecycles_en import train, test, save_model, load_modal, save_stats, load_stats
 from src.viz_helper import compare_training_stats, save_plt
 from src.activations.KNL import Inhibitor
 from src.backbone import Backbone
@@ -77,8 +80,12 @@ def run(
 
     # net_bb_torch_norm = Backbone(NUM_CLASSES, normalization, activation)
     # net_bb_torch_norm.to(device)
-    net_vit = ViT(num_labels=NUM_CLASSES)
-    net_vit.to(device)
+
+    # net_vit = ViT(num_labels=NUM_CLASSES)
+    # net_vit.to(device)
+
+    net_eff = EfficientNet.from_pretrained('efficientnet-b0', num_classes=NUM_CLASSES)
+    net_eff.to(device)
 
 
     # Different models with some parameters I want to compare against
@@ -89,7 +96,8 @@ def run(
                 or f'Backbone with Torch Weight Norm LR {learning_rate} USING {optim_name} ON {dataset}',
         'label': 'BackBone Torch',
         # 'model': net_bb_torch_norm,
-        'model': net_vit,
+        # 'model': net_vit,
+        'model': net_eff,
         'save_model': f'{progress_title}',
         'save_stats': f'{progress_title}',
         'LR': learning_rate
