@@ -6,6 +6,7 @@ cffi==1.14.6
 debugpy==1.4.3
 decorator==5.1.0
 defusedxml==0.7.1
+efficientnet_pytorch=0.7.1
 entrypoints==0.3
 ipykernel==6.4.1
 ipython==7.27.0
