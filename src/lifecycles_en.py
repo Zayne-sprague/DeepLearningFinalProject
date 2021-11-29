@@ -145,6 +145,7 @@ def test_validation(net: torch.nn.Module, validloader):
 def test(net: torch.nn.Module, testloader, loader_description: str = ''):
     device = get_device()
     net.to(device)
+    criterion = torch.nn.CrossEntropyLoss()
 
     metrics = {}
 

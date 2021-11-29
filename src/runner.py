@@ -14,7 +14,7 @@ from src.lifecycles_en import train, test, save_model, load_modal, save_stats, l
 from src.viz_helper import compare_training_stats, save_plt
 from src.activations.KNL import Inhibitor
 from src.backbone import Backbone
-from src.vit import ViT
+# from src.vit import ViT
 from src.dataloader import get_dataloder
 
 from src.activations.activation import KernelActivation
