@@ -22,15 +22,76 @@ We believe it’s a good idea to branch off from the element-wise implementation
 
 ## Experiments 
 
-Table template
-| Activation Function | Test Acc  |  |
+### CIFAR-100 ResNet Model
+
+| Activation Function | Test Acc  |  
+| --- | --- |
+| ReLU |  40.3 |
+| LeakyReLU | 39.91 |
+| GELU | 41.41 | 
+| --- | --- |
+| Max | 43.33 |
+| Max + ReLU | 42.08 |
+| Softmax Threshold | 39.55 |
+| NeLU | 40.3 |
+| PNeLU | 36.71 |
+| Inhibitor | 37.03 |
+| Excitator | **47.37** |
+
+### Tiny ImageNet ResNet Model
+| Activation Function | Test Acc |
+| --- | --- |
+| ReLU | 30.74 |
+| GeLU | 30.04 | 
+| ---  |  ---  |
+| Excitator | **34.27** |
+
+### Caltech-101 ResNet Model
+| Activation Function | Test Acc |
+| --- | --- |
+| ReLU | 44.32 |
+| LeakyReLU | 46.16 |
+| GeLU | 41.17 | 
+| ---  |  ---  |
+| Max | 37.79 |
+| Max + ReLU | 41.17 |
+| Softmax Threshold | 46.62 |
+| Inhibitor | 42.70 |
+| Excitator | **47.47** |
+
+
+## Run Time
+
+Dataset: Caltech-101
+
+Model: ResNet 38 (ish)
+
+GPU: Tesla V100
+
+Batch size: 64
+
+Batches per Epoch: 95
+
+Image size: 64x64
+
+
+| Activation | Epoch Time | Forward Iterations per Second |
 | --- | --- | --- |
-| ... | ... | ... |
+| ReLU | 4.45s | 57.3 | 
+| LeakyReLU | 3.77s | 73.3 |
+| GeLU | 3.78s | 72.81 |
+| --- | --- | --- | 
+| Max | 5.76s | 50.8 |
+| Max + ReLU | 6.53s | 46.13 |
+| Softmax Threshold | 6.26s | 40.39 |
+| NeLU | 6.1s | 41.41 |
+| PNeLU | 6.42s | 37.05 |
+| Inhibitor | 9.18s | 25.41 |
+| Excitator | 10.01s | 25.21 |
+
+* Signficant slow downs for window-based operations. Could be optimized further!
 
 
-
-
-## Results
 
 ## References
 
