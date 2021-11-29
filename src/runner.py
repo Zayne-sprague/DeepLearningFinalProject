@@ -4,7 +4,7 @@ from torch import nn
 import torch.nn.functional as F
 from typing import Tuple
 
-from efficientnet_pytorch import EfficientNet
+from src.efficientnet_pytorch.model import EfficientNet
 
 from functools import partial
 
@@ -85,6 +85,7 @@ def run(
     # net_vit.to(device)
 
     net_eff = EfficientNet.from_pretrained('efficientnet-b0', num_classes=NUM_CLASSES)
+    net_eff._act = activation()
     net_eff.to(device)
 
 
@@ -289,7 +290,7 @@ def single_run():
     ACTIVATION = batch_inhibitor
     IS_BATCH_ACTIVATION = True
     KERNEL_SIZE = 32
-    TITLE_OF_RUN = "vit_baseline"
+    TITLE_OF_RUN = "efficientnet_baseline"
 
     act = partial(KernelActivation, partial(ACTIVATION, influence=0.1), is_batch_activation=IS_BATCH_ACTIVATION,
                   kernel_size=KERNEL_SIZE)
