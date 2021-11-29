@@ -16,9 +16,13 @@ We believe it’s a good idea to branch off from the element-wise implementation
 
 ### Datasets
 
+* CIFAR-100
+* Tiny ImageNet
+* Caltech 101
 
 ## Architectures
 
+* Resnet 38 (homegrown)
 
 ## Experiments 
 
