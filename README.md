@@ -54,6 +54,7 @@ An example input patch, and the corresponding outputs for the subset of activati
 | Activation Function | Test Acc |
 | --- | --- |
 | ReLU | 30.74 |
+| LeakyReLU | 31.11 |
 | GeLU | 30.04 | 
 | ---  |  ---  |
 | Max | 23.45 |
