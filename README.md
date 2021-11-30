@@ -39,7 +39,7 @@ We believe it’s a good idea to branch off from the element-wise implementation
 | Softmax Threshold | 39.55 |
 | NeLU | 40.3 |
 | PNeLU | 36.71 |
-| Inhibitor | 37.03 |
+| *Inhibitor | 37.03 |
 | Excitator | **47.37** |
 
 ### Tiny ImageNet ResNet Model
@@ -48,8 +48,12 @@ We believe it’s a good idea to branch off from the element-wise implementation
 | ReLU | 30.74 |
 | GeLU | 30.04 | 
 | ---  |  ---  |
+| Max | 23.45 |
+| Max + ReLU | 23.56 |
 | Softmax Threshold | 29.35 |
-| Inhibitor | 27.28 |
+| NeLU | 27.33 |
+| PNeLU | 29.62 |
+| *Inhibitor | 27.28 |
 | Excitator | **34.27** |
 
 ### Caltech-101 ResNet Model
@@ -64,7 +68,7 @@ We believe it’s a good idea to branch off from the element-wise implementation
 | Softmax Threshold | 46.62 |
 | NeLU | 38.33 |
 | PNeLU | **47.77** | 
-| Inhibitor | 42.70 |
+| *Inhibitor | 42.70 |
 | Excitator | **47.47** |
 
 
