@@ -14,10 +14,13 @@ We believe it’s a good idea to branch off from the element-wise implementation
 ## Technical Approach
 ### Window-Based Activation Functions
 
-
 ![generic window activation](src/images/window-activation-fig1.png)
 
+Generic window-based activation function
+
 ![set-of-window activations](src/images/window-activation-fig2.png)
+
+An example input patch, and the corresponding outputs for the subset of activation functions: (1) excitator, (2) inhibitor, (3) nelu, and (4) max.
 
 ### Datasets
 
