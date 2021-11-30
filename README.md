@@ -48,6 +48,8 @@ We believe it’s a good idea to branch off from the element-wise implementation
 | ReLU | 30.74 |
 | GeLU | 30.04 | 
 | ---  |  ---  |
+| Softmax Threshold | 29.35 |
+| Inhibitor | 27.28 |
 | Excitator | **34.27** |
 
 ### Caltech-101 ResNet Model
@@ -60,6 +62,8 @@ We believe it’s a good idea to branch off from the element-wise implementation
 | Max | 37.79 |
 | Max + ReLU | 41.17 |
 | Softmax Threshold | 46.62 |
+| NeLU | 38.33 |
+| PNeLU | **47.77** | 
 | Inhibitor | 42.70 |
 | Excitator | **47.47** |
 
