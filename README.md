@@ -11,8 +11,16 @@ This is a direct analogy with how deep learning models use a similar neuron mode
 We believe it’s a good idea to branch off from the element-wise implementation of activation functions; drawing inspiration from the brain, we present a set of window-based activation functions, which aim to resemble some of the biological neural network interactions.
 
 
-## Related Work
+## Technical Approach
+### Window-Based Activation Functions
 
+![generic window activation](src/images/window-activation-fig1.png)
+
+Generic window-based activation function
+
+![set-of-window activations](src/images/window-activation-fig2.png)
+
+An example input patch, and the corresponding outputs for the subset of activation functions: (1) excitator, (2) inhibitor, (3) nelu, and (4) max.
 
 ### Datasets
 
@@ -20,7 +28,7 @@ We believe it’s a good idea to branch off from the element-wise implementation
 * Tiny ImageNet
 * Caltech 101
 
-## Architectures
+### Architectures
 
 * Resnet 38 (homegrown)
 
@@ -104,7 +112,3 @@ Image size: 64x64
 * Signficant slow downs for window-based operations. Could be optimized further!
 
 
-
-## References
-
--
