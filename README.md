@@ -15,6 +15,10 @@ We believe it’s a good idea to branch off from the element-wise implementation
 ### Window-Based Activation Functions
 
 
+![generic window activation](src/images/window-activation-fig1.png)
+
+![set-of-window activations](src/images/window-activation-fig2.png)
+
 ### Datasets
 
 * CIFAR-100
