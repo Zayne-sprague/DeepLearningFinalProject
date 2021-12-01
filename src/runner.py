@@ -320,10 +320,94 @@ def single_run():
         save_on_checkpoint=False,
     )
 
+def efficient_net_run():
+    for dataset in ("CIFAR-100", "TINY", "CALTECH101"):
+        configs = [
+            # baselines
+            {"title": 'baselines/relu', "act": nn.ReLU},
+            {"title": 'baselines/leakyrelu', "act": nn.LeakyReLU},
+            {"title": 'baselines/gelu', "act": nn.GELU},
+
+            # excitator
+            {"title": 'EN/excitator_v2/k8_inf0.1', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/excitator_v2/k16_inf0.1', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.1), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/excitator_v2/k8_inf0.25', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.25), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/excitator_v2/k16_inf0.25', "act": partial(KernelActivation, partial(batch_excitator_v2, influence=0.25), is_batch_activation=True, kernel_size=16)},
+
+            # inhibitor, kernel
+            {"title": 'EN/inhibitor_v2/k4_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=4)},
+            {"title": 'EN/inhibitor_v2/k8_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/inhibitor_v2/k16_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/inhibitor_v2/k32_inf0.1', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.1), is_batch_activation=True, kernel_size=32)},
+
+            # inhibitor, influence
+            {"title": 'EN/inhibitor_v2/k16_inf0.05', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.05), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/inhibitor_v2/k16_inf0.25', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.25), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/inhibitor_v2/k16_inf0.33', "act": partial(KernelActivation, partial(batch_inhibitor_v2, influence=0.33), is_batch_activation=True, kernel_size=16)},
+
+            # softmax_relu, kernels
+            {"title": 'EN/softmax_relu/k2_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=4)},
+            {"title": 'EN/softmax_relu/k4_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=4)},
+            {"title": 'EN/softmax_relu/k8_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/softmax_relu/k16_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/softmax_relu/k32_thresh0.25', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.25), is_batch_activation=True, kernel_size=32)},
+
+            # softmax_relu, thresholds
+            {"title": 'EN/softmax_relu/k8_thresh0.05', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.05), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/softmax_relu/k8_thresh0.33', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.33), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/softmax_relu/k8_thresh0.1', "act": partial(KernelActivation, partial(batch_softmax_relu, threshold=0.1), is_batch_activation=True, kernel_size=8)},
+
+            # max relu
+            {"title": 'EN/max_relu/k2', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=2)},
+            {"title": 'EN/max_relu/k4', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=4)},
+            {"title": 'EN/max_relu/k8', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/max_relu/k16', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/max_relu/k32', "act": partial(KernelActivation, partial(batch_max_relu), is_batch_activation=True, kernel_size=32)},
+
+            # max
+            {"title": 'EN/max/k2', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=2)},
+            {"title": 'EN/max/k4', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=4)},
+            {"title": 'EN/max/k8', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=8)},
+            {"title": 'EN/max/k16', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=16)},
+            {"title": 'EN/max/k32', "act": partial(KernelActivation, partial(batch_max), is_batch_activation=True, kernel_size=32)},
+        ]
+        for config in configs:
+            act = config['act']
+            title = config['title']
+
+            run(
+                #epochs=50,
+                epochs=1,
+                batch_size=64,
+                learning_rate=0.0001,
+
+                optimizer=torch.optim.Adam,
+                normalization=torch.nn.Identity,
+                activation=act,
+
+                train_models=True,
+                test_models=True,
+
+                loss_fig_title=f'{title}/training_loss_{dataset}@{lr}',
+                acc_fig_title=f'{title}/training_acc_on_{dataset}@{lr}',
+                test_loss_fig_title=f'{title}/test_loss_on_{dataset}@{lr}',
+                test_acc_fig_title=f'{title}/test_acc_on_{dataset}@{lr}',
+
+                progress_title=title,
+
+                dataset=dataset,
+                checkpoint=1,
+                save_on_checkpoint=False,
+            )
+
+
+
+
 if __name__ == "__main__":
+    efficient_net_run()
     # batch_v2_run()
     # batch_v1_run()
-    single_run()
+    # single_run()
 
 
 
