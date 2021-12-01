@@ -321,6 +321,7 @@ def single_run():
     )
 
 def efficient_net_run():
+    lr = 0.0001
     for dataset in ("CIFAR-100", "TINY", "CALTECH101"):
         configs = [
             # baselines
@@ -379,7 +380,7 @@ def efficient_net_run():
                 #epochs=50,
                 epochs=1,
                 batch_size=64,
-                learning_rate=0.0001,
+                learning_rate=lr,
 
                 optimizer=torch.optim.Adam,
                 normalization=torch.nn.Identity,
