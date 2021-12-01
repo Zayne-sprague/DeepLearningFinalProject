@@ -377,8 +377,7 @@ def efficient_net_run():
             title = config['title']
 
             run(
-                #epochs=50,
-                epochs=1,
+                epochs=50,
                 batch_size=64,
                 learning_rate=lr,
 
